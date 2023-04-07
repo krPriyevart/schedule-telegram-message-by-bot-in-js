@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <fieldset>
+        <form id="save">
+            <label>
+                <span>Token : </span>
+                <input type="text" id="token">
+            </label>
+            <label>
+                <span>ChatID : </span>
+                <input type="text" id="chatid">
+            </label>
+            <input type="submit" value="save"/>
+        </form>
+    <form id="form">
+        <h1>enter text</h1>
+        <label>
+            <span>no of message:</span>
+        <input type="number" id="menumber" placeholder="in digit">
+        </label>
+        <label>
+            <span>Duration gap:</span>
+        <input type="text" id="time" placeholder="in hr">
+        </label>
+        <br>
+        <br>
+        <label>
+            <span>message:</span><br>
+        <textarea id="text" rows="20" cols="100">
+        
+        </textarea>
+    </label>
+    <br><br>
+        <input type="submit" value="send">
+    </form>
+    <br>
+    <button onclick="finishtask()">RESET</button>
+    <p>Number of messages successfully send : <i id="count">0</i></p>
+    </fieldset>
+    <!--html code end-->
+    <script>
+        let save = document.querySelector("#save");
+        save.addEventListener("submit", e=>{
+            e.preventDefault();
+            let token = document.querySelector("#token").value;
+            let chatid = document.querySelector("#chatid").value;
+            localStorage.setItem("token", token);
+            localStorage.setItem("chatid", chatid);
+
+        })
+        let form = document.querySelector("#form");
+        
+        form.addEventListener("submit", e=>{
+            e.preventDefault();
+            let message = document.querySelector("#text").value;
+            let no_mess = document.querySelector("#menumber").value;
+            let time = document.querySelector("#time").value;
+            // time = time*3600;
+            
+            localStorage.setItem("message", message);
+            localStorage.setItem("no_mess", no_mess);
+            localStorage.setItem("duration", time);
+            let end_message = no_mess*time;
+            // setTimeout(finishtask, end_message);
+           
+            let finish = setInterval(send , time*1000);
+           
+            function finishtask(){
+                clearInterval(finish);
+            }
+            setTimeout(() => {
+            clearInterval(finish);
+            }, no_mess*time*1000);
+        })
+       
+    </script>
+    <script>
+        var i=1;
+        function send(){
+            
+            i = i++;
+            let count = document.querySelector("#count");
+            count.innerHTML=i;
+            let no_message = localStorage.getItem("no_mess");
+            let duration = localStorage.getItem("duration");
+            let TOKEN = localStorage.getItem("token");
+            let chatID = localStorage.getItem("chatid");
+            let end_message = no_message*duration;
+            setTimeout(send, end_message);
+       
+       
+             let messagesend = localStorage.getItem("message");
+            //  console.log(bot.TOKEN);
+            //  console.log(bot.chatID);
+            //  console.log(message);
+             apiurl = "https://api.telegram.org/bot"+TOKEN+"/sendMessage?chat_id="+chatID+"&text="+messagesend;
+            
+            fetch(apiurl,{
+            method: "GET"
+        })
+        .then(sucess => {
+            //alert("message send successfully")
+        }, error => {
+            //alert("message not send")
+            //console.log(error);
+        
+        })
+        
+    }
+        </script>
+</body>
+</html>
